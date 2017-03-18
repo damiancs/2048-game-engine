@@ -35,7 +35,7 @@ class Engine(object):
         self._goal = goal
         self._goal_pass = goal_pass
 
-        self._grid = [[0 for j in range(self._size)] for i in range(self._size)]
+        self._grid = [[0 for _ in range(self._size)] for _ in range(self._size)]
         self._spawn(2)
 
     def _spawn(self, items=1):
@@ -75,12 +75,29 @@ class Engine(object):
     def _status(self):
         """
         Calculates and returns the game status after a move is done.
-        :return: The status of the game represented by two boolean values meaning (Goal achieved?, Has move?).
-         :rtype: tuple[bool, bool]
+        :return: The status of the game represented by two boolean values meaning (Goal achieved?, can move?) and the
+        current configuration of the grid.
+         :rtype: tuple[bool, bool, list[list[int]]]
         """
-        # TODO: Implement this method
-
-        return True, False
+        goal_achieved = False
+        can_move = False
+        for i in range(self._size):
+            for j in range(self._size):
+                if self._grid[i][j] == 0:
+                    can_move = True
+                if self._grid[i][j] == self._goal:
+                    goal_achieved = True
+        if not can_move:
+            for i in range(self._size):
+                if can_move:
+                    break
+                for j in range(self._size):
+                    if j == self._size - 1:
+                        continue
+                    if self._grid[i][j] == self._grid[i][j + 1] or self._grid[j][i] == self._grid[j + 1][i]:
+                        can_move = True
+                        break
+        return goal_achieved, can_move, self._grid
 
     @staticmethod
     def _rotate(grid_, rotations=0):
@@ -94,7 +111,7 @@ class Engine(object):
          :rtype: list[list[int]]
         """
         size = len(grid_)
-        new_grid = [[0 for j in range(size)] for i in range(size)]
+        new_grid = [[0 for _ in range(size)] for _ in range(size)]
         if rotations >= 4:
             rotations %= 4
 
@@ -240,7 +257,7 @@ class Engine(object):
         """
         Moves the tiles to the left and returns the status of the game.
         :return: The status of the game (self._status).
-         :rtype: tuple[bool, bool]
+         :rtype: tuple[bool, bool, list[list[int]]]
         """
         old_grid = self._copy(self._grid)
         self._grid = Engine._move(self._grid)
@@ -252,7 +269,7 @@ class Engine(object):
         """
         Moves the tiles up and returns the status of the game.
         :return: The status of the game (self._status).
-         :rtype: tuple[bool, bool]
+         :rtype: tuple[bool, bool, list[list[int]]]
         """
         old_grid = self._copy(self._grid)
         self._grid = Engine._rotate(self._grid, 1)
@@ -266,7 +283,7 @@ class Engine(object):
         """
         Moves the tiles to the right and returns the status of the game.
         :return: The status of the game (self._status).
-         :rtype: tuple[bool, bool]
+         :rtype: tuple[bool, bool, list[list[int]]]
         """
         old_grid = self._copy(self._grid)
         self._grid = Engine._rotate(self._grid, 2)
@@ -280,7 +297,7 @@ class Engine(object):
         """
         Moves the tiles down and returns the status of the game.
         :return: The status of the game (self._status).
-         :rtype: tuple[bool, bool]
+         :rtype: tuple[bool, bool, list[list[int]]]
         """
         old_grid = Engine._copy(self._grid)
         self._grid = Engine._rotate(self._grid, 3)
@@ -289,3 +306,21 @@ class Engine(object):
         if not Engine._same(old_grid, self._grid):
             self._spawn()
         return self._status()
+
+    @property
+    def size(self):
+        """
+        Gets the size of the game.
+        :return: Size of the game.
+         :rtype: int
+        """
+        return self._size
+
+    @property
+    def grid(self):
+        """
+        Gets the grid.
+        :return: The grid.
+         :rtype: list[list[int]]
+        """
+        return self._grid
