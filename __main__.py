@@ -27,7 +27,7 @@ class Application(Frame, object):
               "512": {"bg": "#edc850", "fg": "white"},
               "1024": {"bg": "#edc53f", "fg": "white"},
               "2048": {"bg": "#edc22e", "fg": "white"},
-              "4096": {"bg": "", "fg": ""},
+              "4096": {"bg": "#3c3a32", "fg": "white"},
               "8192": {"bg": "", "fg": ""},
               "16384": {"bg": "", "fg": ""},
               "32768": {"bg": "", "fg": ""},
